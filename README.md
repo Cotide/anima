@@ -11,12 +11,11 @@ supports multiple relational mappings, and is a database manipulation tool.
 **[Document](https://github.com/biezhi/anima/wiki)**
 
 [![Travis Build](https://travis-ci.org/biezhi/anima.svg?branch=master)](https://travis-ci.org/biezhi/anima)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3abf98fb260340cea9808d169cc47d8b)](https://www.codacy.com/app/biezhi/anima?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=biezhi/anima&amp;utm_campaign=Badge_Grade)
 [![](https://img.shields.io/maven-central/v/io.github.biezhi/anima.svg)](https://mvnrepository.com/artifact/io.github.biezhi/anima)
 [![codecov](https://codecov.io/gh/biezhi/anima/branch/master/graph/badge.svg)](https://codecov.io/gh/biezhi/anima) 
 [![License](https://img.shields.io/badge/license-Apache2-blue.svg)](https://github.com/biezhi/anima/blob/master/LICENSE)
-[![@biezhi on zhihu](https://img.shields.io/badge/zhihu-%40biezhi-red.svg)](https://www.zhihu.com/people/biezhi)
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/biezhii.svg?style=social&label=Follow%20Twitter)](https://twitter.com/biezhii)
-[![Join the chat at https://gitter.im/anima-chat/Lobby](https://badges.gitter.im/anima-chat/Lobby.svg)](https://gitter.im/anima-chat/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Feature
 
@@ -52,7 +51,7 @@ supports multiple relational mappings, and is a database manipulation tool.
 <dependency>
     <groupId>io.github.biezhi</groupId>
     <artifactId>anima</artifactId>
-    <version>0.2.4-SNAPSHOT</version>
+    <version>0.2.5-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -61,7 +60,7 @@ Here's the `RELEASE` version.
 **As Gradle**
 
 ```java
-compile 'io.github.biezhi:anima:0.2.3'
+compile 'io.github.biezhi:anima:0.2.4'
 ```
 
 **As Maven**
@@ -70,7 +69,7 @@ compile 'io.github.biezhi:anima:0.2.3'
 <dependency>
     <groupId>io.github.biezhi</groupId>
     <artifactId>anima</artifactId>
-    <version>0.2.3</version>
+    <version>0.2.4</version>
 </dependency>
 ```
 

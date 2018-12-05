@@ -32,11 +32,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.sql2o.Sql2o;
+import org.sql2o.converters.Converter;
 import org.sql2o.quirks.Quirks;
 import org.sql2o.quirks.QuirksDetector;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -95,7 +98,16 @@ public class Anima {
 
     private static Anima instance;
 
+    /**
+     * see {@link #of()}
+     * @return
+     */
+    @Deprecated
     public static Anima me() {
+        return of();
+    }
+
+    public static Anima of() {
         if (null == instance.sql2o) {
             throw new AnimaException(SQL2O_IS_NULL);
         }
@@ -155,6 +167,16 @@ public class Anima {
     }
 
     /**
+     * Create anima with url, like Sqlite or h2
+     *
+     * @param url jdbc url
+     * @return Anima
+     */
+    public static Anima open(String url, Quirks quirks) {
+        return open(url, null, null, quirks);
+    }
+
+    /**
      * Create anima with datasource
      *
      * @param dataSource datasource instance
@@ -162,6 +184,16 @@ public class Anima {
      */
     public static Anima open(DataSource dataSource) {
         return open(new Sql2o(dataSource));
+    }
+
+    /**
+     * Create anima with datasource and quirks
+     *
+     * @param dataSource datasource instance
+     * @return Anima
+     */
+    public static Anima open(DataSource dataSource, Quirks quirks) {
+        return open(new Sql2o(dataSource, quirks));
     }
 
     /**
@@ -265,6 +297,25 @@ public class Anima {
      */
     public Anima useSQLLimit(boolean useSQLLimit) {
         this.useSQLLimit = useSQLLimit;
+        return this;
+    }
+
+    /**
+     * Add custom Type converter
+     *
+     * @param converters converter see {@link Converter}
+     * @return Anima
+     */
+    public Anima addConverter(Converter<?>... converters) {
+        if (null == converters || converters.length == 0) {
+            throw new AnimaException("converters not be null.");
+        }
+        for (Converter<?> converter : converters) {
+            Type[]   types  = converter.getClass().getGenericInterfaces();
+            Type[]   params = ((ParameterizedType) types[0]).getActualTypeArguments();
+            Class<?> type   = (Class) params[0];
+            sql2o.getQuirks().addConverter(type, converter);
+        }
         return this;
     }
 
