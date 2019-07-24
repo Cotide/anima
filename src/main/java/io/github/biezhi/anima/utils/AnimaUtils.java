@@ -21,16 +21,14 @@ import io.github.biezhi.anima.core.AnimaCache;
 import io.github.biezhi.anima.exception.AnimaException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.sql2o.converters.Converter;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.lang.reflect.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.*;
 
 import static io.github.biezhi.anima.core.AnimaCache.*;
 
@@ -134,24 +132,16 @@ public class AnimaUtils {
     }
 
     public static String getLambdaColumnName(Serializable lambda) {
-        for (Class<?> cl = lambda.getClass(); cl != null; cl = cl.getSuperclass()) {
-            try {
-                Method m = cl.getDeclaredMethod("writeReplace");
-                m.setAccessible(true);
-                Object replacement = m.invoke(lambda);
-                if (!(replacement instanceof SerializedLambda)) {
-                    break; // custom interface implementation
-                }
-                SerializedLambda serializedLambda = (SerializedLambda) replacement;
-                return getLambdaColumnName(serializedLambda);
-            } catch (Exception e) {
-                throw new AnimaException("get lambda column name fail", e);
-            }
-        }
-        return null;
+        SerializedLambda serializedLambda = computeSerializedLambda(lambda);
+        return AnimaCache.getLambdaColumnName(serializedLambda);
     }
 
     public static String getLambdaFieldName(Serializable lambda) {
+        SerializedLambda serializedLambda = computeSerializedLambda(lambda);
+        return AnimaCache.getLambdaFieldName(serializedLambda);
+    }
+
+    private static SerializedLambda computeSerializedLambda(Serializable lambda) {
         for (Class<?> cl = lambda.getClass(); cl != null; cl = cl.getSuperclass()) {
             try {
                 Method m = cl.getDeclaredMethod("writeReplace");
@@ -160,8 +150,7 @@ public class AnimaUtils {
                 if (!(replacement instanceof SerializedLambda)) {
                     break; // custom interface implementation
                 }
-                SerializedLambda serializedLambda = (SerializedLambda) replacement;
-                return getLambdaFieldName(serializedLambda);
+                return (SerializedLambda) replacement;
             } catch (Exception e) {
                 throw new AnimaException("get lambda column name fail", e);
             }
@@ -206,6 +195,35 @@ public class AnimaUtils {
             toR[i] = list.get(i);
         }
         return toR;
+    }
+
+    public static boolean isBasicType(Class<?> type) {
+        return type.equals(char.class) ||
+                type.equals(Character.class) ||
+                type.equals(boolean.class) ||
+                type.equals(Boolean.class) ||
+                type.equals(byte.class) ||
+                type.equals(Byte.class) ||
+                type.equals(short.class) ||
+                type.equals(Short.class) ||
+                type.equals(int.class) ||
+                type.equals(Integer.class) ||
+                type.equals(long.class) ||
+                type.equals(Long.class) ||
+                type.equals(BigDecimal.class) ||
+                type.equals(BigInteger.class) ||
+                type.equals(Date.class) ||
+                type.equals(String.class) ||
+                type.equals(double.class) ||
+                type.equals(Double.class) ||
+                type.equals(float.class) ||
+                type.equals(Float.class);
+    }
+
+    public static Class getConverterType(Converter<?> converter) {
+        Type[] types  = converter.getClass().getGenericInterfaces();
+        Type[] params = ((ParameterizedType) types[0]).getActualTypeArguments();
+        return (Class) params[0];
     }
 
 }
